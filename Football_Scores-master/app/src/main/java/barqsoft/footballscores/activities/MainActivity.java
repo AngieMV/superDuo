@@ -1,11 +1,17 @@
-package barqsoft.footballscores;
+package barqsoft.footballscores.activities;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import barqsoft.footballscores.R;
+import barqsoft.footballscores.fragments.PagerFragment;
 
 public class MainActivity extends ActionBarActivity
 {
@@ -14,9 +20,20 @@ public class MainActivity extends ActionBarActivity
     public static String LOG_TAG = "MainActivity";
     private final String save_tag = "Save Test";
     private PagerFragment my_main;
+
+    // An account type, in the form of a domain name
+    public static final String ACCOUNT_TYPE = "barqsoft.footballscores.datasync";
+    // The account name
+    public static final String ACCOUNT = "dummyaccount";
+    // Instance fields
+    Account mAccount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAccount = createAccount(this);
+
         setContentView(R.layout.activity_main);
         Log.d(LOG_TAG, "Reached MainActivity onCreate");
         if (savedInstanceState == null) {
@@ -27,6 +44,15 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    public static Account createAccount(Context context) {
+        Account newAccount = new Account(
+                ACCOUNT, ACCOUNT_TYPE);
+        AccountManager accountManager =
+                (AccountManager) context.getSystemService(
+                        ACCOUNT_SERVICE);
+        accountManager.addAccountExplicitly(newAccount, null, null);
+        return newAccount;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,10 +1,11 @@
-package barqsoft.footballscores;
+package barqsoft.footballscores.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import barqsoft.footballscores.DatabaseContract.scores_table;
+import static barqsoft.footballscores.data.DatabaseContract.SCORES_TABLE;
+import static barqsoft.footballscores.data.DatabaseContract.scores_table;
 
 /**
  * Created by yehya khaled on 2/25/2015.
@@ -21,7 +22,7 @@ public class ScoresDBHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        final String CreateScoresTable = "CREATE TABLE " + DatabaseContract.SCORES_TABLE + " ("
+        final String CreateScoresTable = "CREATE TABLE " + SCORES_TABLE + " ("
                 + scores_table._ID + " INTEGER PRIMARY KEY,"
                 + scores_table.DATE_COL + " TEXT NOT NULL,"
                 + scores_table.TIME_COL + " INTEGER NOT NULL,"
@@ -41,6 +42,6 @@ public class ScoresDBHelper extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         //Remove old values when upgrading.
-        db.execSQL("DROP TABLE IF EXISTS " + DatabaseContract.SCORES_TABLE);
+        db.execSQL("DROP TABLE IF EXISTS " + SCORES_TABLE);
     }
 }

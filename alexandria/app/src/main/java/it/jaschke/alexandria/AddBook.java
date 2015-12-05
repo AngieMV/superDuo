@@ -21,12 +21,16 @@ import android.widget.Toast;
 
 
 import it.jaschke.alexandria.data.AlexandriaContract;
+import it.jaschke.alexandria.helpers.Network;
 import it.jaschke.alexandria.services.BookService;
 import it.jaschke.alexandria.services.DownloadImage;
 
 
 public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final String TAG = "INTENT_TO_SCAN_ACTIVITY";
+
+    private static final int REQUEST_CODE_SCAN_BAR_CODE = 111;
+
     private EditText ean;
     private final int LOADER_ID = 1;
     private View rootView;
@@ -79,11 +83,7 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                     return;
                 }
                 //Once we have an ISBN, start a book intent
-                Intent bookIntent = new Intent(getActivity(), BookService.class);
-                bookIntent.putExtra(BookService.EAN, ean);
-                bookIntent.setAction(BookService.FETCH_BOOK);
-                getActivity().startService(bookIntent);
-                AddBook.this.restartLoader();
+                requestBookByIsbn(ean);
             }
         });
 
@@ -96,13 +96,8 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
                 // Hint: Use a Try/Catch block to handle the Intent dispatch gracefully, if you
                 // are using an external app.
                 //when you're done, remove the toast below.
-                Context context = getActivity();
-                CharSequence text = "This button should let you scan a book for its barcode!";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
-
+                Intent intent = new Intent(AddBook.this.getActivity(), BarcodeActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_SCAN_BAR_CODE);
             }
         });
 
@@ -130,6 +125,28 @@ public class AddBook extends Fragment implements LoaderManager.LoaderCallbacks<C
         }
 
         return rootView;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode==REQUEST_CODE_SCAN_BAR_CODE) {
+            String isbn = data.getStringExtra(BarcodeActivity.EXTRA_DATA_BARCODE);
+            if (!isbn.equals(BarcodeActivity.NO_DATA)) {
+                ean.setText(isbn);
+                requestBookByIsbn(isbn);
+            }
+        }
+    }
+
+    private void requestBookByIsbn(String isbn) {
+        if (Network.isNetworkAvailable(getActivity())) {
+            Intent bookIntent = new Intent(getActivity(), BookService.class);
+            bookIntent.putExtra(BookService.EAN, isbn);
+            bookIntent.setAction(BookService.FETCH_BOOK);
+            getActivity().startService(bookIntent);
+            AddBook.this.restartLoader();
+        } else {
+            Toast.makeText(getActivity(), this.getString(R.string.network_not_available), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void restartLoader(){

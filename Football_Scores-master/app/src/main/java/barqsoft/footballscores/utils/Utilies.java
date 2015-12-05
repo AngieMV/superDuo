@@ -1,10 +1,22 @@
-package barqsoft.footballscores;
+package barqsoft.footballscores.utils;
+
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.util.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import barqsoft.footballscores.R;
 
 /**
  * Created by yehya khaled on 3/3/2015.
  */
 public class Utilies
 {
+    private static final String PROPERTIES_PATH = "configuration.properties";
+
     public static final int SERIE_A = 357;
     public static final int PREMIER_LEGAUE = 354;
     public static final int CHAMPIONS_LEAGUE = 362;
@@ -83,5 +95,22 @@ public class Utilies
             case "Stoke City FC" : return R.drawable.stoke_city;
             default: return R.drawable.no_icon;
         }
+    }
+
+    public static Properties getProperties(Context context) {
+        Properties properties = new Properties();
+
+        try {
+            AssetManager assetManager = context.getAssets();
+            InputStream inputStream = assetManager.open(PROPERTIES_PATH);
+            if (inputStream != null) {
+                properties.load(inputStream);
+                inputStream.close();
+            }
+        } catch (IOException e) {
+            Log.e("Utilities", e.getMessage(), e);
+        }
+
+        return properties;
     }
 }
