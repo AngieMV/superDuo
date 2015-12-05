@@ -15,53 +15,54 @@ import barqsoft.footballscores.R;
  */
 public class Utilies
 {
-    private static final String PROPERTIES_PATH = "configuration.properties";
 
     public static final int SERIE_A = 357;
     public static final int PREMIER_LEGAUE = 354;
     public static final int CHAMPIONS_LEAGUE = 362;
     public static final int PRIMERA_DIVISION = 358;
     public static final int BUNDESLIGA = 351;
-    public static String getLeague(int league_num)
+
+    public static String getLeague(Context context, int league_num)
     {
         switch (league_num)
         {
-            case SERIE_A : return "Seria A";
-            case PREMIER_LEGAUE : return "Premier League";
-            case CHAMPIONS_LEAGUE : return "UEFA Champions League";
-            case PRIMERA_DIVISION : return "Primera Division";
-            case BUNDESLIGA : return "Bundesliga";
-            default: return "Not known League Please report";
+            case SERIE_A : return context.getString(R.string.seria_a);
+            case PREMIER_LEGAUE : return context.getString(R.string.premier_league);
+            case CHAMPIONS_LEAGUE : return context.getString(R.string.uefa_champions_league);
+            case PRIMERA_DIVISION : return context.getString(R.string.primera_division);
+            case BUNDESLIGA : return context.getString(R.string.bundesliga_league);
+            default: return context.getString(R.string.not_known_league);
         }
     }
-    public static String getMatchDay(int match_day,int league_num)
+
+    public static String getMatchDay(Context context, int match_day,int league_num)
     {
         if(league_num == CHAMPIONS_LEAGUE)
         {
             if (match_day <= 6)
             {
-                return "Group Stages, Matchday : 6";
+                return context.getString(R.string.group_stages);
             }
             else if(match_day == 7 || match_day == 8)
             {
-                return "First Knockout round";
+                return context.getString(R.string.first_knockout);
             }
             else if(match_day == 9 || match_day == 10)
             {
-                return "QuarterFinal";
+                return context.getString(R.string.quarter_final_match);
             }
             else if(match_day == 11 || match_day == 12)
             {
-                return "SemiFinal";
+                return context.getString(R.string.semifinal);
             }
             else
             {
-                return "Final";
+                return context.getString(R.string.final_match);
             }
         }
         else
         {
-            return "Matchday : " + String.valueOf(match_day);
+            return context.getString(R.string.matchday) + String.valueOf(match_day);
         }
     }
 
@@ -97,20 +98,4 @@ public class Utilies
         }
     }
 
-    public static Properties getProperties(Context context) {
-        Properties properties = new Properties();
-
-        try {
-            AssetManager assetManager = context.getAssets();
-            InputStream inputStream = assetManager.open(PROPERTIES_PATH);
-            if (inputStream != null) {
-                properties.load(inputStream);
-                inputStream.close();
-            }
-        } catch (IOException e) {
-            Log.e("Utilities", e.getMessage(), e);
-        }
-
-        return properties;
-    }
 }
